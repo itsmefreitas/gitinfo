@@ -1,0 +1,30 @@
+{
+  "name": "gitinfo",
+  "version": "0.0.1",
+  "description": "A simple TS-Node CLI for fetching and storing github user info.",
+  "main": "index.ts",
+  "scripts": {
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsmefreitas/gitinfo.git"
+  },
+  "author": "Luis Freitas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/itsmefreitas/gitinfo/issues"
+  },
+  "homepage": "https://github.com/itsmefreitas/gitinfo#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.59.8",
+    "eslint": "8.42.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "typescript": "4.3.5",
+    "husky": "8.0.3"
+  }
+}
