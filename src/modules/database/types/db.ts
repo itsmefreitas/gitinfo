@@ -7,7 +7,7 @@ export type DBContext<T = unknown> = {
 type EnvKeyLiterals =
   | "POSTGRES_HOST"
   | "POSTGRES_PORT"
-  | "POSTGRES_DB"
+  | "POSTGRES_DATABASE"
   | "POSTGRES_USER"
   | "POSTGRES_PASSWORD"
 
@@ -15,7 +15,7 @@ type EnvKeyLiterals =
 export const envNames = [
   "POSTGRES_HOST",
   "POSTGRES_PORT",
-  "POSTGRES_DB",
+  "POSTGRES_DATABASE",
   "POSTGRES_USER",
   "POSTGRES_PASSWORD",
 ] as const

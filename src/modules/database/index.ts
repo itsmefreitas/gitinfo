@@ -25,7 +25,7 @@ const Database = ((): DBContext => {
     return {
       host: configMap.POSTGRES_HOST,
       port: Number(configMap.POSTGRES_PORT),
-      database: configMap.POSTGRES_DB,
+      database: configMap.POSTGRES_DATABASE,
       user: configMap.POSTGRES_USER,
       password: configMap.POSTGRES_PASSWORD,
     }
