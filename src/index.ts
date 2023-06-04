@@ -1,5 +1,5 @@
 import { config as readEnvs } from "dotenv"
-import { default as processCommand } from "./modules/cli"
+import { default as interpretCommands } from "./modules/cli"
 import { log } from "./shared/logger"
 import { default as session } from "./shared/sessionConfig"
 
@@ -14,7 +14,7 @@ const main = async (): Promise<void> => {
 
   log("debug", `Session configuration: ${JSON.stringify(session)}`)
 
-  return processCommand()
+  return interpretCommands()
 }
 
 main()

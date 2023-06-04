@@ -26,7 +26,7 @@ const commandToString = (commandName: string): Command => {
  * Parses command from input
  * and calls proper handler.
  */
-const processCommand = async (): Promise<void> => {
+const interpretCommands = async (): Promise<void> => {
   const commandName = (
     await readStream.question(`One of <${argsList.join(", ")}>: `)
   )
@@ -40,7 +40,7 @@ const processCommand = async (): Promise<void> => {
     return readStream.close()
   }
 
-  return processCommand()
+  return interpretCommands()
 }
 
-export default processCommand
+export default interpretCommands

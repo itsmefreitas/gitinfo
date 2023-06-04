@@ -2,7 +2,7 @@ import { default as session } from "./sessionConfig"
 
 export const log = (
   logLevel: keyof Pick<Console, "log" | "error" | "debug">,
-  message: string | Record<string, unknown>
+  message: string | Record<string, unknown> | Error
 ): void => {
   // For all other logs then just log
   if (logLevel !== "debug") {
