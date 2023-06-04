@@ -1,49 +1,50 @@
 import { Interface } from "node:readline/promises"
 import { log } from "../../shared/logger"
-import { closeConnection, getCurrentDbTime } from "../database"
+import { date, getUser, help, quit } from "./commands"
+import { searchUsers } from "./commands/searchUsers"
 import { Command, HandlerFunction, HandlerMap } from "./types"
+import { AxiosError } from "axios"
 
 const handlers: HandlerMap = {
-  [Command.Quit]: async (): Promise<void> => {
-    await closeConnection()
-
-    return log("log", "Buh-bye!")
-  },
-  [Command.Date]: async (): Promise<void> => {
-    const currentDate = await getCurrentDbTime()
-
-    log("log", currentDate.toISOString())
-  },
-  [Command.Help]: () => {
-    return log(
-      "log",
-      `
-    ${Command.SearchUsers}: searches the database and displays results;
-    ${Command.GetUser}: fetch (and caches) information for a user;
-    ${Command.Quit}: exits this CLI;
-    ${Command.Help}: shows usage;
-    ${Command.Date}: tests database connection and queries for current time.
-  `
-    )
-  },
-  [Command.GetUser]: () => {
-    throw new Error("Not implemented (yet)!")
-  },
-  [Command.SearchUsers]: () => {
-    throw new Error("Not implemented (yet)!")
-  },
+  [Command.Quit]: quit,
+  [Command.Date]: date,
+  [Command.Help]: help,
+  [Command.GetUser]: getUser,
+  [Command.SearchUsers]: searchUsers
 }
 
+/**
+ * Wraps command handler in a logger
+ * so that errors are shown
+ * and app does not crash
+ * on account of unhandled promises
+ * @param callback 
+ */
 const safeHandle = async (
   callback: () => ReturnType<HandlerFunction>
 ): Promise<void> => {
   try {
     await callback()
   } catch (e) {
-    log("error", <Error>e)
+    if (e instanceof AxiosError) {
+      /**
+       * So we do not fill up the screen with
+       * ALL the req/res data.
+       */
+      return log("error", e.response?.data)
+    }
+
+    return log("error", <Error>e)
   }
 }
 
+/**
+ * Prompts user for a command type
+ * and dispatches it to the appropriate handler
+ * @param command 
+ * @param readStream 
+ * @returns 
+ */
 const handleCommand = async (
   command: Command,
   readStream: Interface

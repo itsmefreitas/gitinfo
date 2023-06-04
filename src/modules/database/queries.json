@@ -1,3 +1,0 @@
-{
-    "getNow": "SELECT NOW() AS \"currentTime\";"
-}

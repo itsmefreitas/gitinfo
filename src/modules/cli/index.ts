@@ -7,7 +7,7 @@ const readStream = createInterface({
   output: process.stdout,
 })
 
-const argsList = Object.values(Command)
+const verbsList = Object.values(Command)
 
 /**
  * Will retrieve the identifier for
@@ -17,18 +17,28 @@ const argsList = Object.values(Command)
  * @returns a value within Command
  */
 const commandToString = (commandName: string): Command => {
-  const command = argsList.find((name) => name === commandName)
+  const command = verbsList.find(
+    (name) => name === commandName || name[0] === commandName?.[0]
+  )
 
   return command ?? Command.Help
 }
 
 /**
- * Parses command from input
- * and calls proper handler.
+ * Parses command type from input
+ * and calls command handler dispatcher.
  */
 const interpretCommands = async (): Promise<void> => {
+  const commandsWithInitials = verbsList.map(
+    (verbName) => `(${verbName[0]})${verbName.slice(1)}`
+  )
+
+  if (!readStream) {
+    return
+  }
+
   const commandName = (
-    await readStream.question(`One of <${argsList.join(", ")}>: `)
+    await readStream.question(`One of <${commandsWithInitials.join(", ")}>: `)
   )
     .toLowerCase()
     .trim()

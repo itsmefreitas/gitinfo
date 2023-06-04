@@ -29,6 +29,12 @@ RETURNS TEXT AS $$
   SELECT "value" FROM "trimmed";
 $$ LANGUAGE SQL STRICT IMMUTABLE;
 
+-- Map slugify over an input array, useful e.g. for selecting languages
+CREATE OR REPLACE FUNCTION slugify_array("value" TEXT[])
+RETURNS TEXT[] AS $$
+	SELECT array_agg(slugify(n)) FROM unnest("value") AS "n";  
+$$ LANGUAGE SQL STRICT IMMUTABLE;
+
 /*
  A handy dandy function that leverages
  PSQL's regtype interals and will
@@ -184,7 +190,7 @@ BEGIN
 		"location_id",
 		"full_user_data")
 	VALUES
-		(json_fallback("user_data", 'login', NULL::TEXT),
+		(json_fallback("user_data", 'userName', NULL::TEXT),
 		json_fallback("user_data", 'name', NULL::TEXT),
 		"v_location_id",
 		"user_data")

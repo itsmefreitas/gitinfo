@@ -1,7 +1,14 @@
 import { IDatabase, default as loadPg } from "pg-promise"
-import { getNow } from "./queries.json"
-import { DBConfigMap, DBContext, envNames } from "./types/db"
-import { IGetNow } from "./types/queries"
+import { default as queries } from "./queries"
+import {
+  GetNow,
+  GetUserByUserName,
+  GetUsers,
+  DBConfigMap,
+  DBContext,
+  envNames,
+  InsertUser,
+} from "./types"
 import { log } from "../../shared/logger"
 
 const pgPromiseSymbol = loadPg()
@@ -52,15 +59,88 @@ const Database = ((): DBContext => {
       log("debug", "terminating db connection")
 
       await _client?.$pool?.end()
-    }
+    },
   }
 })()
 
-export const getCurrentDbTime = async (): Promise<Date> => {
-  const instance = Database.instance()
+/**
+ * Neecessary to be made available inter-module
+ * so that quit command can close it.
+ */
+export const closeConnection = async (): Promise<void> => Database.close()
 
-  const date = await instance.one<IGetNow["result"]>(getNow)
+export const getCurrentDbTime = async (): Promise<Date> => {
+  const connection = Database.instance()
+
+  const query = queries.getNow
+
+  log("debug", `running ${query}`)
+
+  const date = await connection.one<GetNow["result"]>(query)
   return date.currentTime
 }
 
-export const closeConnection = async (): Promise<void> => Database.close()
+export const getUsers = async (
+  params: GetUsers["params"]
+): Promise<Array<GetUsers["result"]>> => {
+  log("debug", params)
+
+  const connection = Database.instance()
+
+  // The core query for selecting users
+  let query = queries.getUsers
+
+  // String for where clauses
+  const clauses: Array<string> = []
+
+  //
+  if (params?.languages?.length) {
+    clauses.push("lang.slug_array @> slugify_array(${languages})")
+  }
+
+  if (params?.location) {
+    clauses.push("loc.name ILIKE '%${location:value}%'")
+  }
+
+  if (clauses.length) {
+    query += "\n WHERE "
+    query += clauses.map((clause) => `(${clause})`).join(" AND ")
+  }
+
+  log("debug", `running ${query}`)
+
+  return connection.manyOrNone<GetUsers["result"]>(query, params)
+}
+
+/**
+ * Permissively gets user by username from the database
+ * using LOWER() on the WHERE clause
+ * this should cover edge cases
+ * like https://api.github.com/users/a yielding "login": "A"
+ * as the API urls are case-insensitive but the saved strings are not
+ * @param params 
+ * @returns 
+ */
+export const getUserByUserName = async (
+  params: GetUserByUserName["params"]
+): Promise<GetUserByUserName["result"]> => {
+  const connection = Database.instance()
+
+  const query = queries.getUserById
+
+  log("debug", `running ${query}`)
+
+  return connection.oneOrNone<GetUserByUserName["result"]>(query, params)
+}
+
+export const insertUser = async (
+  params: InsertUser["params"]
+): Promise<InsertUser["result"]> => {
+  const connection = Database.instance()
+
+  const query = queries.insertUser
+
+  log("debug", `running ${query}`)
+
+  return connection.oneOrNone<InsertUser["result"]>(query, params)
+}
