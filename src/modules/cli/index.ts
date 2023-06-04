@@ -8,6 +8,9 @@ const readStream = createInterface({
 })
 
 const verbsList = Object.values(Command)
+const commandsWithInitials = verbsList.map(
+  (verbName) => `(${verbName[0]})${verbName.slice(1)}`
+)
 
 /**
  * Will retrieve the identifier for
@@ -29,14 +32,6 @@ const commandToString = (commandName: string): Command => {
  * and calls command handler dispatcher.
  */
 const interpretCommands = async (): Promise<void> => {
-  const commandsWithInitials = verbsList.map(
-    (verbName) => `(${verbName[0]})${verbName.slice(1)}`
-  )
-
-  if (!readStream) {
-    return
-  }
-
   const commandName = (
     await readStream.question(`One of <${commandsWithInitials.join(", ")}>: `)
   )

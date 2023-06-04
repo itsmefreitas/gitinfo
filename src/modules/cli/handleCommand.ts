@@ -1,7 +1,6 @@
 import { Interface } from "node:readline/promises"
 import { log } from "../../shared/logger"
-import { date, getUser, help, quit } from "./commands"
-import { searchUsers } from "./commands/searchUsers"
+import { date, getUser, help, quit, searchUsers } from "./commands"
 import { Command, HandlerFunction, HandlerMap } from "./types"
 import { AxiosError } from "axios"
 
