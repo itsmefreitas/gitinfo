@@ -4,6 +4,11 @@ import { log } from "../../../shared/logger"
 import { default as session } from "../../../shared/sessionConfig"
 import { fetchUserData } from "../../github"
 
+/**
+ * Will fetch an user from the database
+ * and if this is not found, then fetch it from the api
+ * and save it to the DB.
+ */
 export const getUser = async (readStream: Interface): Promise<void> => {
   const nameInput: string = (await readStream.question("UserName: ")).trim()
 

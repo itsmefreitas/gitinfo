@@ -2,7 +2,6 @@ import { IDatabase } from "pg-promise"
 
 export type DBContext<T = unknown> = {
   instance(): IDatabase<T>;
-  close(): Promise<void>;
 };
 
 type EnvKeyLiterals =

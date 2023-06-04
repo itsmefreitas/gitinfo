@@ -207,7 +207,8 @@ BEGIN
 			INSERT INTO "user_languages"
 				("user_id","language_id")
 			VALUES
-				("v_user_id", "v_language_id");
+				("v_user_id", "v_language_id")
+            ON CONFLICT ("user_id", "language_id") DO NOTHING;
 		END IF;
   	END LOOP;
 		

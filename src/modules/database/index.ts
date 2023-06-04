@@ -55,11 +55,6 @@ const Database = ((): DBContext => {
       // Return the existing or newly instanced client.
       return _client
     },
-    close: async (): Promise<void> => {
-      log("debug", "terminating db connection")
-
-      await _client?.$pool?.end()
-    },
   }
 })()
 
@@ -67,7 +62,12 @@ const Database = ((): DBContext => {
  * Neecessary to be made available inter-module
  * so that quit command can close it.
  */
-export const closeConnection = async (): Promise<void> => Database.close()
+export const closeConnection = async (): Promise<void> => {
+  log("debug", "terminating db connection")
+
+  const connection = Database.instance()
+  await connection.$pool.end()
+}
 
 export const getCurrentDbTime = async (): Promise<Date> => {
   const connection = Database.instance()
@@ -118,8 +118,8 @@ export const getUsers = async (
  * this should cover edge cases
  * like https://api.github.com/users/a yielding "login": "A"
  * as the API urls are case-insensitive but the saved strings are not
- * @param params 
- * @returns 
+ * @param params
+ * @returns
  */
 export const getUserByUserName = async (
   params: GetUserByUserName["params"]

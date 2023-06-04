@@ -1,11 +1,13 @@
 import { default as session } from "./sessionConfig"
 
+export type LogginFnType = keyof Pick<
+  Console,
+  "log" | "error" | "dir" | "debug"
+>;
+
 export const log = (
-  logLevel: keyof Pick<Console, "log" | "error" | "dir" | "debug">,
-  message:
-    | string
-    | unknown
-    | Error
+  logLevel: LogginFnType,
+  message: string | unknown | Error
 ): void => {
   // For all other logs then just log
   if (logLevel !== "debug") {

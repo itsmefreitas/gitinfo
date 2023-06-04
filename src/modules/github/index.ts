@@ -7,7 +7,7 @@ import {
 } from "./types"
 import { log } from "../../shared/logger"
 
-const API_BASE_URL = "https://api.github.com"
+export const API_BASE_URL = "https://api.github.com"
 
 export const fetchUserData = async (userName: string): Promise<User> => {
   log("debug", `fetching user data for ${userName} from API`)
