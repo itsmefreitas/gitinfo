@@ -17,8 +17,7 @@ export const getUser = async (readStream: Interface): Promise<void> => {
   if (!session.dryRun && !user) {
     const userData = await fetchUserData(nameInput)
 
-    // ADD INSERT USER HERE
-    await insertUser({ userData })
+    await insertUser(userData)
 
     user = await getUserByUserName({
       userName: userData.userName ?? nameInput,

@@ -26,7 +26,7 @@ export const fetchUserData = async (userName: string): Promise<User> => {
     userName: userData.login,
     name: userData.name,
     location: userData.location,
-    fullUserData: userData,
+    coreUserData: userData,
     languages: await getUserProgrammingLanguages(userData.login),
   }
 }

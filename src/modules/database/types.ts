@@ -1,4 +1,5 @@
-import { IDatabase } from "pg-promise"
+import { IDatabase } from "pg-promise";
+import { UserApiResponse } from "../github/types";
 
 export type DBContext<T = unknown> = {
   instance(): IDatabase<T>;
@@ -47,14 +48,14 @@ export interface GetUserByUserName extends IBaseQuery {
 }
 
 export interface InsertUser extends IBaseQuery {
-    params: { userData: User };
-    result: string | null;
-  }
+  params: User;
+  result: string | null;
+}
 
 export interface User {
   userName: string;
   name: string | null;
   location: string | null;
   languages: Array<string>;
-  fullUserData: Record<string, unknown>;
+  coreUserData: Record<string, unknown>;
 }

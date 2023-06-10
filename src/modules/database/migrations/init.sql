@@ -97,7 +97,7 @@ CREATE TABLE "users" (
     "username" TEXT NOT NULL,
     "name" TEXT NULL,
     "location_id" UUID NULL,
-    "full_user_data" JSONB NOT NULL,
+    "core_user_data" JSONB NOT NULL,
     PRIMARY KEY ("id"),
     CONSTRAINT "UQ_username"
     	UNIQUE ("username"),
@@ -173,34 +173,39 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Takes the user data JSON and inserts it into the DB, returning its UUID
-CREATE OR REPLACE FUNCTION insert_user_data("user_data" JSONB) RETURNS UUID AS $$
+CREATE OR REPLACE FUNCTION insert_user_data(
+	"userName" TEXT,
+	"name" TEXT,
+	"location" TEXT,
+	"languages" TEXT[],
+	"core_user_data" JSONB
+)
+RETURNS UUID AS $$
 DECLARE
 	"v_user_id" UUID = NULL;
     "v_location_id" UUID = NULL;
 	"v_language_id" UUID = NULL;
-	"v_language" RECORD;
+	"v_language" TEXT;
 BEGIN
 
-	SELECT "insert_and_get_location_uuid"("user_data"->>'location')
+	SELECT "insert_and_get_location_uuid"("location")
 		INTO "v_location_id";
 
 	INSERT INTO "users"
 		("username",
 		"name",
 		"location_id",
-		"full_user_data")
+		"core_user_data")
 	VALUES
-		(json_fallback("user_data", 'userName', NULL::TEXT),
-		json_fallback("user_data", 'name', NULL::TEXT),
+		("userName",
+		"name",
 		"v_location_id",
-		"user_data")
+		"core_user_data")
 	RETURNING "id"
 		INTO "v_user_id";
 
-
-
-	FOR "v_language" IN (SELECT jsonb_array_elements("user_data"->'languages') "name") LOOP
-    	SELECT "insert_and_get_language_uuid"("v_language"."name"#>>'{}')
+	FOREACH "v_language" IN ARRAY "languages" LOOP
+    	SELECT "insert_and_get_language_uuid"("v_language")
 		INTO "v_language_id";
 
 		IF ("v_language_id" IS NOT NULL) THEN

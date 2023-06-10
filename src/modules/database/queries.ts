@@ -5,7 +5,7 @@ const queries: Record<string, string> = {
     u.name AS "name",
     loc.name AS "location",
     lang.name_array AS "languages",
-    u.full_user_data AS "fullUserData"
+    u.core_user_data AS "coreUserData"
     FROM "users" u
     LEFT JOIN (SELECT
         ul.user_id AS id,
@@ -22,7 +22,7 @@ const queries: Record<string, string> = {
 	    u.name AS "name",
 	    loc.name AS "location",
 	    lang.name_array AS "languages",
-	    u.full_user_data AS "fullUserData"
+	    u.core_user_data AS "coreUserData"
     FROM "users" u
     LEFT JOIN (SELECT
             ul.user_id AS id,
@@ -33,7 +33,12 @@ const queries: Record<string, string> = {
         GROUP BY ul.user_id
     ) lang USING (id)
     LEFT JOIN "locations" loc ON loc.id = u.location_id`,
-  insertUser: "SELECT insert_user_data(${userData}::JSONB) AS \"id\""
+  insertUser: `SELECT insert_user_data(
+        \${userName}::TEXT,
+        \${name}::TEXT,
+        \${location}::TEXT,
+        \${languages}::TEXT[],
+        \${coreUserData}::JSONB) AS "id"`,
 }
 
 export default queries
