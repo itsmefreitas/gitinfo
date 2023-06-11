@@ -3,7 +3,7 @@ import { default as interpretCommands } from "./modules/cli"
 import { log } from "./shared/logger"
 import { default as session } from "./shared/sessionConfig"
 
-const main = async (): Promise<void> => {
+export const main = async (): Promise<void> => {
 
   // read vars from .env, adding to process.env
   readEnvs()

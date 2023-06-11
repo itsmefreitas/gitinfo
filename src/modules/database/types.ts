@@ -1,5 +1,4 @@
-import { IDatabase } from "pg-promise";
-import { UserApiResponse } from "../github/types";
+import { IDatabase } from "pg-promise"
 
 export type DBContext<T = unknown> = {
   instance(): IDatabase<T>;
