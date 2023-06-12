@@ -1,0 +1,18 @@
+# This docker-compose.yml just includes a simple postgres service
+# running on the config defined by your POSTGRES_* env variables (read from .env).
+version: '3.8'
+
+services:
+  # This image runs the `./src/modules/database/migrations/init.sql` script on first-time startup.
+  gitinfo_postgres:
+  # Pinning to a specific version here too
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DATABASE}'
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    volumes:
+      - ./src/modules/database/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
